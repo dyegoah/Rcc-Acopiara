@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+	<head>
+	    <meta charset="UTF-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	    <title>Painel Admin - RCC Acopiara</title>
+	    
+	    <link rel="icon" type="image/svg+xml" href="/logo.svg">
+	    <link rel="manifest" href="/manifest.json">
+	    <meta name="theme-color" content="#0d6efd">
+	    
+	    <script>
+	        if(localStorage.getItem('rcc_admin_token') !== 'logado') {
+	            window.location.href = 'login.html';
+	        }
+	    </script>
+
+	    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+	    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+	    
+	    <style>
+	        body { padding-top: 76px; background-color: #f0f2f5; display: flex; flex-direction: column; min-height: 100vh; }
+	        .admin-header { background-color: white; border-bottom: 1px solid #dee2e6; padding-top: 20px; margin-bottom: 30px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+	        .nav-tabs .nav-link { color: #6c757d; font-weight: 500; cursor: pointer; border: none; border-bottom: 3px solid transparent; }
+	        .nav-tabs .nav-link:hover { color: #0d6efd; border-color: transparent; }
+	        .nav-tabs .nav-link.active { color: #0d6efd; border-bottom: 3px solid #0d6efd; font-weight: bold; }
+	        main { flex: 1; }
+	        .thumb-admin { width: 50px; height: 50px; object-fit: cover; border-radius: 8px; border: 1px solid #dee2e6; }
+	        .thumb-video { width: 50px; height: 50px; background: #000; color: #fff; display: flex; align-items: center; justify-content: center; border-radius: 8px; font-size: 16px; }
+	        .card-img-top { height: 150px; object-fit: cover; }
+	    </style>
+	</head>
+<body>
+    <div id="topbar-container"></div>
+
+    <div class="admin-header">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3 class="mb-0 text-primary"><i class="fas fa-user-shield me-2"></i>Área Administrativa</h3>
+                <div class="d-flex align-items-center">
+                    <span class="badge bg-secondary me-3">Versão 3.4</span>
+                    <button onclick="logout()" class="btn btn-outline-danger btn-sm fw-bold">
+                        <i class="fas fa-sign-out-alt me-1"></i> SAIR
+                    </button>
+                </div>
+            </div>
+            <ul class="nav nav-tabs">
+                <li class="nav-item"><a class="nav-link active" data-target="secCarrossel"><i class="fas fa-images"></i> Carrossel</a></li>
+                <li class="nav-item"><a class="nav-link" data-target="secAgenda"><i class="fas fa-calendar-alt"></i> Agenda</a></li>
+                <li class="nav-item"><a class="nav-link" data-target="secInscricoes"><i class="fas fa-users"></i> Inscrições</a></li>
+                <li class="nav-item"><a class="nav-link" data-target="secLoja"><i class="fas fa-store"></i> Loja</a></li>
+                <li class="nav-item"><a class="nav-link" data-target="secNoticias"><i class="fas fa-newspaper"></i> Notícias</a></li>
+                <li class="nav-item"><a class="nav-link" data-target="secDoacao"><i class="fas fa-hand-holding-heart"></i> Doação</a></li>
+                <li class="nav-item"><a class="nav-link" data-target="secDiretoria"><i class="fas fa-sitemap"></i> Diretoria</a></li>
+                <li class="nav-item"><a class="nav-link" data-target="secPatrocinio"><i class="fas fa-bullhorn"></i> Patrocínio</a></li>
+                <li class="nav-item ms-auto"><a class="nav-link text-danger" data-target="secSeguranca"><i class="fas fa-lock"></i> Senha</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <main class="container mb-5">
+        <div id="secCarrossel" class="content-section"><div class="row"><div class="col-lg-4 mb-4"><div class="card shadow-sm"><div class="card-body"><form id="formCarrossel"><div class="mb-3"><label>Título</label><input type="text" id="titulo" class="form-control" required></div><div class="mb-3"><label>Descrição</label><textarea id="descricao" class="form-control" required></textarea></div><div class="mb-3"><label>Imagem</label><input type="file" id="file" class="form-control" required></div><button type="submit" class="btn btn-success w-100" id="btnSalvar">Salvar</button></form></div></div></div><div class="col-lg-8"><div class="row g-3" id="listaSlides"></div></div></div></div>
+        <div id="secAgenda" class="content-section d-none"><div class="row"><div class="col-lg-4"><div class="card shadow-sm"><div class="card-body"><form id="formAgenda"><div class="mb-3"><label>Dia</label><select id="agDia" class="form-select"><option>Sábado</option><option>Domingo</option><option>Segunda-feira</option><option>Terça-feira</option></select></div><div class="mb-3"><input id="agData" class="form-control" placeholder="Data"></div><div class="mb-3"><input type="time" id="agHorario" class="form-control"></div><div class="mb-3"><input type="number" id="agOrdem" class="form-control" value="1"></div><div class="mb-3"><input id="agTitulo" class="form-control" placeholder="Título"></div><div class="mb-3"><input id="agDescricao" class="form-control" placeholder="Desc"></div><button class="btn btn-warning w-100">Adicionar</button></form></div></div></div><div class="col-lg-8"><table class="table"><tbody id="tabelaAgenda"></tbody></table></div></div></div>
+        <div id="secInscricoes" class="content-section d-none"><div class="d-flex justify-content-between mb-3"><h4>Inscrições</h4><div class="form-switch"><input class="form-check-input" type="checkbox" id="toggleStatus"><label id="labelStatus">...</label></div></div><table class="table table-striped"><tbody id="tabelaInscricoes"></tbody></table></div>
+        <div id="secLoja" class="content-section d-none"><ul class="nav nav-pills mb-3"><li class="nav-item"><a class="nav-link active" onclick="showLojaTab('produtos')">Produtos</a></li><li class="nav-item"><a class="nav-link" onclick="showLojaTab('pedidos')">Pedidos</a></li></ul><div id="loja-produtos"><form id="formProduto" class="mb-4"><div class="row"><div class="col"><input id="prodNome" class="form-control" placeholder="Nome"></div><div class="col"><input id="prodPreco" type="number" class="form-control" placeholder="Preço"></div><div class="col"><input type="file" id="prodFile" class="form-control"></div><div class="col"><button class="btn btn-success">Add</button></div></div></form><table class="table"><tbody id="tabelaProdutos"></tbody></table></div><div id="loja-pedidos" class="d-none"><table class="table"><tbody id="tabelaPedidos"></tbody></table></div></div>
+        <div id="secNoticias" class="content-section d-none"><div class="row"><div class="col-lg-4"><div class="card shadow-sm"><div class="card-body"><form id="formNoticia"><div class="mb-3"><label>Título</label><input id="notTitulo" class="form-control" required maxlength="150"></div><div class="mb-3"><label>Conteúdo</label><textarea id="notConteudo" class="form-control" rows="4" required maxlength="5000"></textarea></div><div class="mb-3"><label>Mídia</label><input type="file" id="notFile" class="form-control" required></div><button id="btnSalvarNoticia" class="btn btn-danger w-100">Publicar</button></form></div></div></div><div class="col-lg-8"><table class="table"><tbody id="tabelaNoticias"></tbody></table></div></div></div>
+        <div id="secDoacao" class="content-section d-none"><div class="row justify-content-center"><div class="col-md-8"><div class="card shadow-lg border-0"><div class="card-header bg-warning text-dark fw-bold">Configurar Doação</div><div class="card-body p-4"><div class="alert alert-info d-flex align-items-center mb-4"><i class="fas fa-chart-line fa-2x me-3"></i><div><h5 class="mb-0 fw-bold" id="contadorPix">0</h5><small>Cliques no PIX</small></div></div><form id="formDoacao"><div class="mb-3"><label>Chave PIX</label><input id="pixChave" class="form-control" required maxlength="100"></div><div class="mb-4"><label>Texto</label><textarea id="pixTexto" class="form-control" rows="3" required maxlength="250"></textarea></div><button class="btn btn-primary w-100">Atualizar</button></form></div></div></div></div></div>
+        <div id="secDiretoria" class="content-section d-none"><div class="row"><div class="col-lg-4 mb-4"><div class="card shadow-sm"><div class="card-body"><form id="formDiretoria"><div class="mb-3"><label>Nome</label><input id="dirNome" class="form-control" required></div><div class="mb-3"><label>Cargo</label><input id="dirCargo" class="form-control" required></div><div class="mb-3"><label>Ordem</label><input type="number" id="dirOrdem" class="form-control" value="1"></div><div class="mb-3"><label>Período</label><input id="dirPeriodo" class="form-control" required></div><div class="mb-3"><label>Foto</label><input type="file" id="dirFile" class="form-control" required></div><button class="btn btn-info w-100 text-white">Salvar</button></form></div></div></div><div class="col-lg-8"><h5 class="text-primary">Atual</h5><table class="table"><tbody id="tabelaDiretoriaAtivos"></tbody></table><h5 class="text-secondary mt-4">Histórico</h5><table class="table"><tbody id="tabelaDiretoriaHistorico"></tbody></table></div></div></div>
+        <div id="secPatrocinio" class="content-section d-none"><div class="row"><div class="col-lg-4 mb-4"><div class="card shadow-sm border-0"><div class="card-header bg-dark text-white fw-bold">Novo Patrocinador</div><div class="card-body"><form id="formPatrocinio"><div class="mb-3"><label class="fw-bold">Nome da Empresa</label><input type=\"text\" id=\"patNome\" class=\"form-control\" required></div><div class="mb-3"><label class="fw-bold">Arquivo (Logo ou Vídeo)</label><input type="file" id="patFile" class="form-control" accept="image/*,video/*" required></div><button type="submit" class="btn btn-dark w-100 fw-bold" id="btnSalvarPat">Cadastrar</button><div id="loadingPat" class="mt-2 text-center d-none"><span class="spinner-border spinner-border-sm"></span> Enviando...</div></form></div></div></div><div class="col-lg-8"><h4 class="mb-3 border-bottom pb-2">Patrocinadores Ativos</h4><div class="table-responsive"><table class="table table-hover align-middle"><thead class="table-light"><tr><th>Mídia</th><th>Nome</th><th>Ação</th></tr></thead><tbody id="tabelaPatrocinios"></tbody></table></div></div></div></div>
+
+        <div id="secSeguranca" class="content-section d-none">
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div class="card shadow-sm border-danger">
+                        <div class="card-header bg-danger text-white fw-bold">
+                            <i class="fas fa-key me-2"></i> Alterar Senha de Acesso
+                        </div>
+                        <div class="card-body p-4">
+                            <form id="formSenha">
+                                <div class="mb-3">
+                                    <label class="fw-bold">Senha Atual</label>
+                                    <input type="password" id="senhaAtual" class="form-control" required>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="fw-bold">Nova Senha</label>
+                                    <input type="password" id="senhaNova" class="form-control" required>
+                                </div>
+                                <button type="submit" class="btn btn-danger w-100 fw-bold">Confirmar Alteração</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+    <div id="footbar-container"></div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // --- LOGOUT ---
+        function logout() {
+            localStorage.removeItem('rcc_admin_token');
+            localStorage.removeItem('rcc_admin_user');
+            window.location.href = 'login.html';
+        }
+
+        // NAVEGAÇÃO
+        document.querySelectorAll('.nav-tabs .nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelectorAll('.nav-tabs .nav-link').forEach(n => n.classList.remove('active'));
+                this.classList.add('active');
+                document.querySelectorAll('.content-section').forEach(s => s.classList.add('d-none'));
+                const t = this.getAttribute('data-target');
+                document.getElementById(t).classList.remove('d-none');
+                
+                if(t==='secCarrossel') carregarSlides();
+                if(t==='secAgenda') carregarAgenda();
+                if(t==='secInscricoes') { carregarInscricoes(); verificarStatusSistema(); }
+                if(t==='secLoja') { carregarProdutos(); carregarPedidos(); }
+                if(t==='secNoticias') carregarNoticias();
+                if(t==='secDoacao') carregarDoacao();
+                if(t==='secDiretoria') carregarDiretoria();
+                if(t==='secPatrocinio') carregarPatrocinios();
+            });
+        });
+
+        // --- CÓDIGOS ANTERIORES (RESUMIDOS PARA CABER) ---
+        const apiC='/api/carrossel', apiA='/api/agenda', apiI='/api/inscricoes', apiL='/api/loja', apiN='/api/noticias', apiD='/api/doacao', apiDir='/api/diretoria', apiPat='/api/patrocinadores';
+        
+        function carregarSlides(){ fetch(apiC).then(r=>r.json()).then(d=>{ document.getElementById('listaSlides').innerHTML=d.map(i=>`<div class="col-md-4"><div class="card h-100"><img src="${i.imagemUrl}" class="card-img-top"><div class="card-body p-2"><h6 class="small fw-bold">${i.titulo}</h6><button onclick="delSlide(${i.id})" class="btn btn-danger btn-sm w-100">X</button></div></div></div>`).join(''); }); }
+        document.getElementById('formCarrossel').addEventListener('submit',function(e){ e.preventDefault(); const fd=new FormData(); fd.append('titulo',document.getElementById('titulo').value); fd.append('descricao',document.getElementById('descricao').value); fd.append('file',document.getElementById('file').files[0]); fetch(apiC,{method:'POST',body:fd}).then(()=>{alert('Ok');this.reset();carregarSlides();}); }); window.delSlide=id=>fetch(`${apiC}/${id}`,{method:'DELETE'}).then(carregarSlides);
+        function carregarAgenda(){ fetch(apiA).then(r=>r.json()).then(d=>{ document.getElementById('tabelaAgenda').innerHTML=d.map(i=>`<tr><td>${i.diaSemana}<br><small>${i.data}</small></td><td>${i.horario}</td><td>${i.titulo}</td><td><button onclick="delAgenda(${i.id})" class="btn btn-sm btn-danger">X</button></td></tr>`).join(''); }); }
+        document.getElementById('formAgenda').addEventListener('submit',function(e){ e.preventDefault(); const d={diaSemana:document.getElementById('agDia').value,data:document.getElementById('agData').value,horario:document.getElementById('agHorario').value,ordem:document.getElementById('agOrdem').value,titulo:document.getElementById('agTitulo').value,descricao:document.getElementById('agDescricao').value}; fetch(apiA,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)}).then(()=>{alert('Ok');this.reset();carregarAgenda();}); }); window.delAgenda=id=>fetch(`${apiA}/${id}`,{method:'DELETE'}).then(carregarAgenda);
+        function carregarInscricoes(){ fetch(apiI).then(r=>r.json()).then(d=>{ document.getElementById('totalInscritos').innerText=`Total: ${d.length}`; document.getElementById('tabelaInscricoes').innerHTML=d.map(p=>`<tr><td>${p.id}</td><td><img src="${p.fotoUrl||''}" width="30"></td><td>${p.nomeCompleto}</td><td>${p.cidade}</td><td>${p.cidade}</td><td>${p.telefone}</td><td><button onclick="delInsc(${p.id})" class="btn btn-sm btn-danger">X</button></td></tr>`).join(''); }); }
+        function verificarStatusSistema(){ fetch(`${apiI}/status`).then(r=>r.json()).then(a=>{ document.getElementById('toggleStatus').checked=a; document.getElementById('labelStatus').innerText=a?"Abertas":"Fechadas"; }); }
+        document.getElementById('toggleStatus').addEventListener('change',function(){fetch(`${apiI}/status`,{method:'POST'}).then(r=>r.json()).then(()=>verificarStatusSistema());}); window.delInsc=(id)=>{if(confirm('Cancelar?'))fetch(`${apiI}/${id}`,{method:'DELETE'}).then(carregarInscricoes);};
+        window.showLojaTab=t=>{document.getElementById('loja-produtos').classList.add('d-none');document.getElementById('loja-pedidos').classList.add('d-none');document.getElementById(`loja-${t}`).classList.remove('d-none');if(t==='pedidos')carregarPedidos();else carregarProdutos();}
+        function carregarProdutos(){ fetch(`${apiL}/produtos`).then(r=>r.json()).then(d=>{ document.getElementById('tabelaProdutos').innerHTML=d.map(p=>`<tr><td><img src="${p.imagemUrl}" class="thumb-admin"></td><td>${p.nome}</td><td>R$ ${p.preco}</td><td><button onclick="delProd(${p.id})" class="btn btn-danger btn-sm">X</button></td></tr>`).join(''); }); }
+        document.getElementById('formProduto').addEventListener('submit',function(e){e.preventDefault(); const fd=new FormData(); fd.append('nome',document.getElementById('prodNome').value);fd.append('preco',document.getElementById('prodPreco').value);fd.append('descricao',document.getElementById('prodDesc').value);fd.append('file',document.getElementById('prodFile').files[0]); fetch(`${apiL}/produtos`,{method:'POST',body:fd}).then(()=>{alert('Ok');this.reset();carregarProdutos();}); }); window.delProd=id=>fetch(`${apiL}/produtos/${id}`,{method:'DELETE'}).then(carregarProdutos);
+        function carregarPedidos(){ fetch(`${apiL}/pedidos`).then(r=>r.json()).then(d=>{ document.getElementById('tabelaPedidos').innerHTML=d.map(p=>`<tr><td>${p.nomeComprador}</td><td>${p.nomeProduto}</td><td>${p.status}</td><td><button onclick="entregar(${p.id})" class="btn btn-success btn-sm">OK</button><button onclick="delPedido(${p.id})" class="btn btn-danger btn-sm">X</button></td></tr>`).join(''); }); } window.delPedido=id=>fetch(`${apiL}/pedidos/${id}`,{method:'DELETE'}).then(carregarPedidos); window.entregar=id=>fetch(`${apiL}/pedidos/${id}/entregar`,{method:'PUT'}).then(carregarPedidos);
+        function carregarNoticias(){ fetch(apiN).then(r=>r.json()).then(d=>{ document.getElementById('tabelaNoticias').innerHTML=d.map(n=>{ let thumb = n.tipoMedia==='VIDEO' ? '<div class="thumb-video"><i class="fas fa-video"></i></div>' : `<img src="${n.mediaUrl}" class="thumb-admin">`; return `<tr><td>${thumb}</td><td>${new Date(n.dataPublicacao).toLocaleDateString()}</td><td>${n.titulo}</td><td><button onclick="delNot(${n.id})" class="btn btn-danger btn-sm">X</button></td></tr>`; }).join(''); }); }
+        document.getElementById('formNoticia').addEventListener('submit',function(e){ e.preventDefault(); const fd=new FormData(); fd.append('titulo',document.getElementById('notTitulo').value);fd.append('conteudo',document.getElementById('notConteudo').value);fd.append('file',document.getElementById('notFile').files[0]); document.getElementById('btnSalvarNoticia').disabled=true; fetch(apiN,{method:'POST',body:fd}).then(()=>{alert('Ok');this.reset();carregarNoticias();}).finally(()=>document.getElementById('btnSalvarNoticia').disabled=false); }); window.delNot=id=>fetch(`${apiN}/${id}`,{method:'DELETE'}).then(carregarNoticias);
+        function carregarDoacao(){ fetch(apiD).then(r=>r.json()).then(d=>{ document.getElementById('pixChave').value=d.chavePix||''; document.getElementById('pixTexto').value=d.textoDoacao||''; document.getElementById('contadorPix').innerText=d.contadorCopias||0; }); }
+        document.getElementById('formDoacao').addEventListener('submit',function(e){ e.preventDefault(); const d={chavePix:document.getElementById('pixChave').value,textoDoacao:document.getElementById('pixTexto').value}; fetch(apiD,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)}).then(()=>{alert('Ok');carregarDoacao();}); });
+        function carregarDiretoria(){ fetch(apiDir).then(r=>r.json()).then(d=>{ const at=d.filter(x=>x.ativo), hi=d.filter(x=>!x.ativo); document.getElementById('tabelaDiretoriaAtivos').innerHTML=at.map(m=>`<tr><td><img src="${m.fotoUrl}" class="thumb-admin"></td><td>${m.nome}<br><small>${m.cargo}</small></td><td>${m.periodo}</td><td><button onclick="arqDir(${m.id})" class="btn btn-warning btn-sm"><i class="fas fa-history"></i></button> <button onclick="delDir(${m.id})" class="btn btn-danger btn-sm">X</button></td></tr>`).join(''); document.getElementById('tabelaDiretoriaHistorico').innerHTML=hi.map(m=>`<tr><td><img src="${m.fotoUrl}" class="thumb-admin" style="filter:grayscale(100%)"></td><td>${m.nome}<br><small>${m.cargo}</small></td><td>${m.periodo}</td><td><button onclick="delDir(${m.id})" class="btn btn-danger btn-sm">X</button></td></tr>`).join(''); });}
+        document.getElementById('formDiretoria').addEventListener('submit',function(e){ e.preventDefault(); const fd=new FormData(); fd.append('nome',document.getElementById('dirNome').value);fd.append('cargo',document.getElementById('dirCargo').value);fd.append('ordem',document.getElementById('dirOrdem').value);fd.append('periodo',document.getElementById('dirPeriodo').value);fd.append('file',document.getElementById('dirFile').files[0]); fetch(apiDir,{method:'POST',body:fd}).then(()=>{alert('Ok');this.reset();carregarDiretoria();}); }); window.delDir=id=>{if(confirm('Excluir?'))fetch(`${apiDir}/${id}`,{method:'DELETE'}).then(carregarDiretoria);}; window.arqDir=id=>fetch(`${apiDir}/${id}/arquivar`,{method:'PUT'}).then(carregarDiretoria);
+        function carregarPatrocinios(){ fetch(apiPat).then(r => r.json()).then(data => { const t = document.getElementById('tabelaPatrocinios'); t.innerHTML = ''; data.forEach(p => { let thumb = p.tipoMedia === 'VIDEO' ? '<div class="thumb-video"><i class="fas fa-video"></i></div>' : `<img src="${p.mediaUrl}" class="thumb-admin">`; t.innerHTML += `<tr><td>${thumb}</td><td>${p.nome}</td><td><button onclick="delPatrocinio(${p.id})" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button></td></tr>`; }); }); }
+        document.getElementById('formPatrocinio').addEventListener('submit', function(e) { e.preventDefault(); const btn = document.getElementById('btnSalvarPat'); const spin = document.getElementById('loadingPat'); const fd = new FormData(); fd.append('nome', document.getElementById('patNome').value); fd.append('file', document.getElementById('patFile').files[0]); btn.disabled = true; spin.classList.remove('d-none'); fetch(apiPat, { method: 'POST', body: fd }).then(() => { alert('Patrocinador cadastrado!'); this.reset(); carregarPatrocinios(); }).catch(() => alert('Erro ao salvar.')).finally(() => { btn.disabled = false; spin.classList.add('d-none'); }); }); window.delPatrocinio = function(id) { if(confirm('Remover patrocinador?')) { fetch(`${apiPat}/${id}`, { method: 'DELETE' }).then(() => carregarPatrocinios()); } };
+
+        // --- LÓGICA DE TROCAR SENHA ---
+        document.getElementById('formSenha').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const user = localStorage.getItem('rcc_admin_user');
+            const oldPass = document.getElementById('senhaAtual').value;
+            const newPass = document.getElementById('senhaNova').value;
+
+            fetch('/api/auth/alterar-senha', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({username: user, oldPass: oldPass, newPass: newPass})
+            }).then(res => {
+                if(res.ok) { alert('Senha alterada com sucesso!'); this.reset(); }
+                else { alert('Erro: Senha atual incorreta.'); }
+            });
+        });
+
+        // INIT
+        document.addEventListener("DOMContentLoaded", function() {
+            fetch("/topbar/topbar.html").then(r=>r.text()).then(h=>document.getElementById('topbar-container').innerHTML=h);
+            fetch("/topbar/footbar.html").then(r=>r.text()).then(h=>document.getElementById('footbar-container').innerHTML=h);
+            carregarSlides();
+        });
+    </script>
+</body>
+</html>

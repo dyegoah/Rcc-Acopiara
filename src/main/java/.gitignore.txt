@@ -1,0 +1,119 @@
+##############################################
+#  GITIGNORE PARA SPRING BOOT + STS + DOCKER
+#  MULTI-MODULE + TESTS
+##############################################
+
+###############
+#  BUILD
+###############
+/target/
+/*/target/            # para multi-módulos
+/build/
+/*/build/
+
+###############
+#  MAVEN
+###############
+.mvn/wrapper/maven-wrapper.jar
+.mvn/wrapper/maven-wrapper.properties
+.mvn/timing.properties
+dependency-reduced-pom.xml
+release.properties
+
+
+###############
+#  IDE - SPRING TOOLS SUITE (STS)
+###############
+.apt_generated
+.factorypath
+.springBeans
+.sts4-cache
+.metadata/
+bin/
+tmp/
+.springBeans
+
+###############
+#  ECLIPSE / STS
+###############
+.project
+.classpath
+.settings/
+.loadpath
+
+
+###############
+#  LOGS
+###############
+*.log
+logs/
+*/logs/
+
+###############
+#  OS FILES (Windows / Mac / Linux)
+###############
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+###############
+#  TEMPORÁRIOS
+###############
+*.tmp
+*.swp
+*.swo
+*.bak
+*.old
+
+###############
+#  DOCKER
+###############
+docker-compose.override.yml
+docker-compose.local.yml
+*.env
+.env.local
+.env.*.local
+
+###############
+#  JAR / WAR / FILES
+###############
+*.jar
+*.war
+*.ear
+
+###############
+#  TESTES (JUnit, Mockito, Jacoco)
+###############
+/test-output/
+/*/test-output/
+.jacoco/
+jacoco.exec
+test-results/
+*/test-results/
+surefire-reports/
+failsafe-reports/
+
+###############
+#  MULTI-MODULE (cobre subprojetos)
+###############
+*/.classpath
+*/.project
+*/.settings/
+*/bin/
+*/tmp/
+*/logs/
+*/out/
+
+###############
+#  UPLOADS LOCAIS (se usar upload de imagens)
+###############
+/uploads/
+/*/uploads/
+
+###############
+#  RENDER / DEPLOY
+###############
+/render.yaml
+render-build.sh

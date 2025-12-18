@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+	<head>
+	    <meta charset="UTF-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	    <title>Carnaval com Cristo - RCC Acopiara</title>
+	    
+	    <link rel="icon" type="image/svg+xml" href="/logo.svg">
+	    <link rel="manifest" href="/manifest.json">
+	    <meta name="theme-color" content="#0d6efd">
+	    
+	    <meta name="apple-mobile-web-app-capable" content="yes">
+	    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+	    <meta name="apple-mobile-web-app-title" content="RCC Acopiara">
+	    <link rel="apple-touch-icon" href="/logo.svg">
+
+	    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+	    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+	    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+	    <style>
+	        /* Ajuste para evitar seleção de texto como em apps nativos */
+	        body { 
+	            padding-top: 76px; 
+	            background-color: #f8f9fa; 
+	            display: flex; 
+	            flex-direction: column; 
+	            min-height: 100vh;
+	            -webkit-tap-highlight-color: transparent;
+	        }
+	        main { flex: 1; padding: 0 !important; }
+
+	        /* CARROSSEL */
+	        #heroCarousel .carousel-item { height: 85vh; background-color: #000; }
+	        #heroCarousel .carousel-item img { height: 100%; width: 100%; object-fit: cover; filter: brightness(0.8); }
+	        .carousel-caption { bottom: 20%; z-index: 2; }
+	        .carousel-caption h1 { font-weight: 800; text-transform: uppercase; letter-spacing: 2px; font-size: 3.5rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.9); }
+	        .carousel-caption p { font-size: 1.5rem; font-weight: 500; text-shadow: 1px 1px 2px rgba(0,0,0,0.9); }
+
+	        /* --- TIMELINE SECTION (COM PATROCÍNIOS LATERAIS) --- */
+	        .timeline-section { background-color: #fff; padding: 80px 0; }
+	        .nav-pills .nav-link { color: #555; background-color: #f8f9fa; margin: 0 5px; border-radius: 50px; padding: 10px 25px; font-weight: 600; border: 1px solid #dee2e6; transition: all 0.3s; }
+	        .nav-pills .nav-link.active { background-color: #0d6efd; color: white; border-color: #0d6efd; transform: scale(1.05); box-shadow: 0 4px 10px rgba(13, 110, 253, 0.3); }
+	        .timeline-item { padding: 20px 30px; position: relative; border-left: 3px solid #e9ecef; margin-left: 20px; }
+	        .timeline-item::before { content: ''; position: absolute; left: -10px; top: 25px; width: 17px; height: 17px; background-color: #0d6efd; border: 3px solid #fff; border-radius: 50%; box-shadow: 0 0 0 3px #e9ecef; }
+	        .timeline-time { font-weight: 800; color: #0d6efd; font-size: 1.1rem; margin-bottom: 5px; }
+	        .timeline-title { font-size: 1.2rem; font-weight: 700; color: #333; }
+
+	        /* PATROCÍNIOS LATERAIS (CARROSSEL AUTOMÁTICO) */
+	        .sidebar-ad-slot {
+	            margin-bottom: 20px;
+	            border-radius: 10px;
+	            overflow: hidden;
+	            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+	            background: #f8f9fa;
+	            aspect-ratio: 1/1; /* Quadrado */
+	            position: relative;
+	            border: 1px solid #dee2e6;
+	        }
+	        .sidebar-ad-slot .carousel,
+	        .sidebar-ad-slot .carousel-inner,
+	        .sidebar-ad-slot .carousel-item { height: 100%; }
+	        .ad-img { width: 100%; height: 100%; object-fit: cover; }
+	        .ad-video { width: 100%; height: 100%; object-fit: cover; }
+	        
+	        .ad-placeholder {
+	            width: 100%; height: 100%;
+	            display: flex;
+	            flex-direction: column;
+	            align-items: center;
+	            justify-content: center;
+	            color: #adb5bd;
+	            text-align: center;
+	            cursor: pointer;
+	            transition: all 0.3s;
+	        }
+	        .ad-placeholder:hover { background-color: #e9ecef; color: #6c757d; }
+
+	        /* LOJA (FLUIDA) */
+	        .loja-section { background-color: #f0f2f5; padding: 80px 0; }
+	        .product-card { border: none; border-radius: 15px; overflow: hidden; transition: transform 0.3s; background: white; box-shadow: 0 4px 15px rgba(0,0,0,0.05); cursor: pointer; height: 100%; display: flex; flex-direction: column; }
+	        .product-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+	        .product-img { height: 250px; width: 100%; object-fit: cover; object-position: top center; }
+	        .product-price { font-size: 1.2rem; font-weight: 800; color: #28a745; }
+
+	        /* NOTÍCIAS (COMPLETAS) */
+	        .noticia-section { background-color: #fff; padding: 80px 0; }
+	        .noticia-card { border: none; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); height: 100%; display: flex; flex-direction: column; transition: transform 0.3s; cursor: pointer; background: white; }
+	        .noticia-card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
+	        .noticia-media-wrapper { height: 200px; width: 100%; position: relative; background: #000; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+	        .noticia-img { width: 100%; height: 100%; object-fit: cover; }
+	        .video-icon-overlay { position: absolute; font-size: 3rem; color: rgba(255,255,255,0.8); z-index: 2; }
+	        .noticia-body { padding: 20px; flex: 1; display: flex; flex-direction: column; }
+	        .noticia-date { font-size: 0.8rem; color: #888; margin-bottom: 8px; }
+	        .noticia-title { font-weight: 700; font-size: 1.1rem; margin-bottom: 10px; color: #333; line-height: 1.4; }
+	        .noticia-excerpt { font-size: 0.9rem; color: #666; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 15px; flex: 1; }
+	        .btn-read-more { color: #dc3545; font-weight: 700; text-decoration: none; font-size: 0.9rem; }
+	        .btn-read-more:hover { text-decoration: underline; }
+
+	        /* DOAÇÃO */
+	        .doacao-section { background: linear-gradient(135deg, #ffc107 0%, #ffca2c 100%); padding: 80px 0; color: #333; }
+	        .doacao-card { background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); overflow: hidden; }
+	        .pix-key-box { background-color: #f8f9fa; border: 2px dashed #dee2e6; border-radius: 10px; padding: 15px; font-family: monospace; font-size: 1.1rem; color: #555; word-break: break-all; }
+
+	        /* DIRETORIA (GLASSMORPHISM) */
+	        .diretoria-section { padding: 100px 0; background: url('https://images.unsplash.com/photo-1438232992991-995b7058bbb3?q=80&w=2073&auto=format&fit=crop') no-repeat center center fixed; background-size: cover; position: relative; }
+	        .diretoria-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); }
+	        .glass-container { position: relative; z-index: 2; }
+	        .glass-card { background: rgba(255, 255, 255, 0.1); border-radius: 16px; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); padding: 30px; text-align: center; color: white; transition: transform 0.3s; height: 100%; }
+	        .glass-card:hover { transform: translateY(-10px); background: rgba(255, 255, 255, 0.15); }
+	        .member-photo { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid rgba(255,255,255,0.3); margin-bottom: 15px; }
+	        .member-role { color: #ffca2c; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; font-weight: 700; margin-bottom: 5px; }
+	        .member-name { font-size: 1.4rem; font-weight: 700; margin-bottom: 5px; }
+	        .member-period { font-size: 0.9rem; opacity: 0.7; }
+
+	        @media (max-width: 992px) {
+	            body { padding-top: 60px; }
+	            #heroCarousel .carousel-item { height: 60vh; min-height: 400px; }
+	            .carousel-caption h1 { font-size: 2rem; }
+	            .carousel-caption p { font-size: 1rem; }
+	            .product-img { height: 200px; }
+	            /* No Mobile, talvez queira esconder os patrocinadores laterais */
+	            .sidebar-col { display: none; }
+	        }
+	    </style>
+	</head>
+<body>
+
+    <div id="topbar-container"></div>
+
+    <main>
+        <div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active"></button>
+                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
+                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"></button>
+            </div>
+            <div class="carousel-inner" id="carousel-content"></div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev"><span class="carousel-control-prev-icon"></span></button>
+            <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next"><span class="carousel-control-next-icon"></span></button>
+        </div>
+
+        <section class="timeline-section" id="programacao">
+            <div class="container-fluid px-lg-5">
+                <div class="row">
+                    <div class="col-lg-2 sidebar-col" id="patrocinio-esq"></div>
+
+                    <div class="col-lg-8">
+                        <div class="text-center mb-5">
+                            <h6 class="text-primary fw-bold text-uppercase ls-2">Fique por dentro</h6>
+                            <h2 class="display-5 fw-bold">Programação do Evento</h2>
+                            <div class="mx-auto mt-3" style="width: 60px; height: 4px; background: #0d6efd;"></div>
+                        </div>
+
+                        <ul class="nav nav-pills justify-content-center mb-5" id="pills-tab" role="tablist"></ul>
+                        <div class="tab-content" id="pills-tabContent">
+                            <div class="text-center py-5 text-muted">
+                                <div class="spinner-border text-primary"></div><br>Carregando programação...
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-2 sidebar-col" id="patrocinio-dir"></div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="loja-section" id="loja">
+            <div class="container">
+                <div class="text-center mb-5">
+                    <h6 class="text-success fw-bold text-uppercase ls-2">Produtos Exclusivos</h6>
+                    <h2 class="display-5 fw-bold">Nossa Lojinha</h2>
+                    <div class="mx-auto mt-3" style="width: 60px; height: 4px; background: #198754;"></div>
+                    <p class="text-muted mt-3">Adquira produtos e ajude na evangelização!</p>
+                </div>
+                <div class="row g-4" id="lista-produtos-publica">
+                    <div class="text-center"><div class="spinner-border text-success"></div></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="noticia-section" id="noticias">
+            <div class="container">
+                <div class="text-center mb-5">
+                    <h6 class="text-danger fw-bold text-uppercase ls-2">Acompanhe Tudo</h6>
+                    <h2 class="display-5 fw-bold">Notícias & Cobertura</h2>
+                    <div class="mx-auto mt-3" style="width: 60px; height: 4px; background: #dc3545;"></div>
+                    <p class="text-muted mt-3">Fique por dentro do que acontece no Carnaval com Cristo</p>
+                </div>
+                <div class="row g-4" id="lista-noticias-publica">
+                    <div class="text-center"><div class="spinner-border text-danger"></div></div>
+                </div>
+                <div class="text-center mt-5">
+                    <button class="btn btn-outline-danger rounded-pill px-4" onclick="alert('Em breve!')">Ver todas as notícias</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="doacao-section" id="doacao">
+            <div class="container">
+                <div class="row justify-content-center align-items-center">
+                    <div class="col-lg-10">
+                        <div class="doacao-card p-5">
+                            <div class="row align-items-center">
+                                <div class="col-md-7 mb-4 mb-md-0">
+                                    <h6 class="text-warning fw-bold text-uppercase ls-2 mb-2">Faça sua oferta</h6>
+                                    <h2 class="display-5 fw-bold mb-3">Ajude a Obra!</h2>
+                                    <p class="lead text-muted mb-4" id="txtDoacaoDescricao">Carregando...</p>
+                                    <div class="mb-3">
+                                        <label class="fw-bold small text-muted mb-1">Chave PIX:</label>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="pix-key-box flex-grow-1" id="chavePixTexto">...</div>
+                                            <button class="btn btn-warning btn-lg shadow-sm" onclick="copiarPix()" id="btnCopiarPix"><i class="far fa-copy"></i></button>
+                                        </div>
+                                        <div id="msgCopiado" class="text-success small fw-bold mt-1" style="opacity: 0;">Copiado!</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-5 text-center">
+                                    <div class="bg-light p-3 d-inline-block rounded-4 border shadow-sm">
+                                        <div id="qrcodeDoacao"></div>
+                                        <small class="d-block mt-2 text-muted fw-bold">Escaneie pelo App do Banco</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="diretoria-section" id="diretoria">
+            <div class="diretoria-overlay"></div>
+            <div class="container glass-container">
+                <div class="text-center mb-5 text-white">
+                    <h6 class="text-warning fw-bold text-uppercase ls-2">Liderança</h6>
+                    <h2 class="display-5 fw-bold">Nossa Diretoria</h2>
+                    <div class="mx-auto mt-3" style="width: 60px; height: 4px; background: #ffca2c;"></div>
+                    <p class="mt-3 opacity-75">Aqueles que servem com amor e dedicação.</p>
+                </div>
+                <div class="row g-4 justify-content-center" id="lista-diretoria">
+                    <div class="text-center"><div class="spinner-border text-light"></div></div>
+                </div>
+                <div class="text-center mt-5">
+                    <button class="btn btn-outline-light rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#modalHistorico">
+                        <i class="fas fa-history me-2"></i> Ver Histórico de Membros
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <div class="container py-5 text-center text-muted"><small>RCC Acopiara</small></div>
+    </main>
+
+    <div id="footbar-container"></div>
+
+    <div class="modal fade" id="modalInscricao" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header bg-primary text-white"><h5 class="modal-title">Ficha de Inscrição</h5><button class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="formInscricaoPublica"><div class="row g-3"><div class="col-md-8"><label>Nome Completo *</label><input type="text" name="nome" class="form-control" required></div><div class="col-md-4"><label>Nascimento *</label><input type="date" name="nascimento" class="form-control" required></div><div class="col-md-6"><label>Nome da Mãe *</label><input type="text" name="mae" class="form-control" required></div><div class="col-md-6"><label>WhatsApp *</label><input type="text" name="telefone" id="telefoneInput" class="form-control" maxlength="15" required></div><div class="col-md-6"><label>Cidade *</label><input type="text" name="cidade" class="form-control" required></div><div class="col-md-6"><label>Paróquia</label><input type="text" name="paroquia" class="form-control"></div><div class="col-md-12"><label>E-mail</label><input type="email" name="email" class="form-control"></div><div class="col-md-12"><label>Foto (Opcional)</label><input type="file" name="foto" class="form-control" accept="image/*"></div></div><div class="d-grid mt-4"><button type="submit" class="btn btn-success btn-lg" id="btnEnviarInscricao">CONFIRMAR INSCRIÇÃO</button><div id="msgLoading" class="text-center text-primary mt-2 d-none"><div class="spinner-border spinner-border-sm"></div> Enviando...</div></div></form></div></div></div></div>
+    <div class="modal fade" id="modalEncerrado" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content text-center"><div class="modal-body p-5"><i class="fas fa-lock fa-4x text-danger mb-3"></i><h3 class="fw-bold">Inscrições Encerradas</h3><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button></div></div></div></div>
+    <div class="modal fade" id="modalComprovante" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog modal-dialog-centered"><div class="modal-content text-center border-0 shadow-lg"><div class="modal-header bg-success text-white justify-content-center"><h5 class="modal-title fw-bold">Inscrição Confirmada!</h5></div><div class="modal-body p-4"><p class="text-muted mb-4">Inscrição realizada com sucesso.</p><div class="d-flex justify-content-center mb-3"><div id="qrcode" class="p-2 bg-white border rounded"></div></div><div class="alert alert-light border"><h4 class="fw-bold text-success mb-0" id="compId">#000</h4><p class="mb-1 fw-bold" id="compNome">Participante</p><p class="mb-0 small text-muted" id="compData">--/--/----</p></div><div class="d-grid gap-2"><button onclick="compartilharWhatsapp()" class="btn btn-success btn-lg"><i class="fab fa-whatsapp me-2"></i> Enviar no WhatsApp</button><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fechar</button></div></div></div></div></div>
+    <div class="modal fade" id="modalProduto" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 overflow-hidden"><div class="row g-0"><div class="col-md-5"><img id="modalImg" src="" class="w-100 h-100" style="object-fit:cover; object-position: top center; min-height:250px;"></div><div class="col-md-7"><div class="p-4 d-flex flex-column h-100 justify-content-center"><button type="button" class="btn-close position-absolute top-0 end-0 m-3" data-bs-dismiss="modal"></button><h4 class="fw-bold mb-2" id="modalNome">Produto</h4><h3 class="text-success fw-bold mb-3" id="modalPreco">R$ 0,00</h3><p class="text-muted mb-4" id="modalDesc">Descrição...</p><button onclick="abrirFormCompra()" class="btn btn-success btn-lg w-100 shadow">EU QUERO COMPRAR</button></div></div></div></div></div></div>
+    <div class="modal fade" id="modalCompraForm" tabindex="-1"><div class="modal-dialog modal-sm modal-dialog-centered"><div class="modal-content"><div class="modal-header bg-success text-white"><h5 class="modal-title">Finalizar Pedido</h5><button class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="formCompra"><input type="hidden" id="compraProdNome"><input type="hidden" id="compraValor"><div class="mb-3"><label>Seu Nome</label><input type="text" id="compraNome" class="form-control" required></div><div class="mb-3"><label>WhatsApp</label><input type="text" id="compraTel" class="form-control" required></div><div class="mb-3"><label>Pagamento</label><select id="compraPag" class="form-select"><option>PIX</option><option>Dinheiro</option><option>Cartão</option></select></div><div class="d-grid"><button type="submit" class="btn btn-dark">Confirmar Pedido</button></div></form></div></div></div></div>
+    <div class="modal fade" id="modalNoticia" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable"><div class="modal-content border-0"><div class="modal-header"><h5 class="modal-title fw-bold" id="modalNoticiaTitulo">Título da Notícia</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><div id="modalNoticiaMedia" class="bg-black w-100 d-flex justify-content-center" style="max-height: 500px; overflow:hidden;"></div><div class="p-4"><small class="text-muted mb-2 d-block" id="modalNoticiaData">--/--/----</small><div id="modalNoticiaConteudo" style="white-space: pre-wrap;"></div></div></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button></div></div></div></div>
+    <div class="modal fade" id="modalHistorico" tabindex="-1"><div class="modal-dialog modal-dialog-scrollable modal-lg"><div class="modal-content"><div class="modal-header bg-dark text-white"><h5 class="modal-title"><i class="fas fa-history me-2"></i> Nossa História</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="list-group list-group-flush" id="listaHistorico"><div class="text-center text-muted">Carregando...</div></div></div></div></div></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            fetch("/topbar/topbar.html").then(r=>r.text()).then(h=>document.getElementById('topbar-container').innerHTML=h);
+            fetch("/topbar/footbar.html").then(r=>r.text()).then(h=>document.getElementById('footbar-container').innerHTML=h);
+            carregarCarrossel(); carregarAgenda(); carregarLojaPublica(); carregarNoticiasPublicas(); initDoacao(); carregarDiretoriaPublica(); carregarPatrociniosPublico();
+        });
+
+        // --- CARROSSEL ---
+        function carregarCarrossel() { fetch('/api/carrossel').then(r=>r.json()).then(d=>{ const c = document.getElementById('carousel-content'); if(d.length===0){ c.innerHTML=`<div class="carousel-item active"><img src="https://via.placeholder.com/1920x1080?text=Aguardando" class="d-block w-100"><div class="carousel-caption"><h1>Breve</h1></div></div>`; return; } d.forEach((item,i)=>{ const active=i===0?'active':''; c.innerHTML+=`<div class="carousel-item ${active}" data-bs-interval="5000"><img src="${item.imagemUrl}" class="d-block w-100"><div class="carousel-caption"><h1 class="display-3">${item.titulo}</h1><p class="lead mb-4">${item.descricao}</p><a href="#inscricao" class="btn btn-primary btn-lg px-5 py-3 fw-bold rounded-pill fs-5"><i class="fas fa-check-circle me-2"></i> INSCREVA-SE</a></div></div>`; }); }); }
+
+        // --- AGENDA ---
+        function carregarAgenda() { fetch('/api/agenda').then(r=>r.json()).then(data=>{ const nav = document.getElementById('pills-tab'), content = document.getElementById('pills-tabContent'); if(data.length===0) { content.innerHTML='<div class="text-center text-muted">Em breve...</div>'; return; } const grupos = data.reduce((acc, item) => { if (!acc[item.diaSemana]) acc[item.diaSemana] = []; acc[item.diaSemana].push(item); return acc; }, {}); const diasMap = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"]; const diaHoje = diasMap[new Date().getDay()]; const chaves = Object.keys(grupos); const diaAtivo = chaves.includes(diaHoje) ? diaHoje : chaves[0]; nav.innerHTML = ''; content.innerHTML = ''; let idx=0; for (const [dia, itens] of Object.entries(grupos)) { const active = (dia === diaAtivo) ? 'active' : ''; const id=`tab-${idx}`; nav.innerHTML += `<li class="nav-item"><button class="nav-link ${active}" id="${id}-btn" data-bs-toggle="pill" data-bs-target="#${id}">${dia}<br><small style="font-size:0.8em;opacity:0.8">${itens[0].data||''}</small></button></li>`; let htmlItens = ''; itens.forEach(ev => { htmlItens += `<div class="timeline-item"><div class="timeline-time">${ev.horario}</div><div class="timeline-title">${ev.titulo}</div><p class="text-muted mb-0">${ev.descricao||''}</p></div>`; }); content.innerHTML += `<div class="tab-pane fade show ${active}" id="${id}"><div class="row justify-content-center"><div class="col-lg-12"><div class="bg-light p-4 rounded-4 shadow-sm border">${htmlItens}</div></div></div></div>`; idx++; } }); }
+
+        // --- LOJA ---
+        function carregarLojaPublica() { fetch('/api/loja/produtos').then(r => r.json()).then(data => { const container = document.getElementById('lista-produtos-publica'); if(data.length === 0) { container.innerHTML = '<div class="col-12 text-center text-muted">Nenhum produto disponível.</div>'; return; } container.innerHTML = ''; data.forEach(p => { container.innerHTML += `<div class="col-md-6 col-lg-3"><div class="product-card h-100" onclick="verProduto('${encodeURIComponent(JSON.stringify(p))}')"><img src="${p.imagemUrl}" class="product-img"><div class="p-3 text-center"><h5 class="fw-bold mb-1 text-truncate">${p.nome}</h5><p class="product-price mb-0">R$ ${p.preco.toFixed(2)}</p><button class="btn btn-outline-success btn-sm mt-2 rounded-pill px-4">Ver Detalhes</button></div></div></div>`; }); }); } let produtoSelecionado = null; function verProduto(s) { produtoSelecionado = JSON.parse(decodeURIComponent(s)); document.getElementById('modalImg').src = produtoSelecionado.imagemUrl; document.getElementById('modalNome').innerText = produtoSelecionado.nome; document.getElementById('modalPreco').innerText = `R$ ${produtoSelecionado.preco.toFixed(2)}`; document.getElementById('modalDesc').innerText = produtoSelecionado.descricao; new bootstrap.Modal(document.getElementById('modalProduto')).show(); } function abrirFormCompra() { bootstrap.Modal.getInstance(document.getElementById('modalProduto')).hide(); document.getElementById('compraProdNome').value = produtoSelecionado.nome; document.getElementById('compraValor').value = `R$ ${produtoSelecionado.preco.toFixed(2)}`; new bootstrap.Modal(document.getElementById('modalCompraForm')).show(); } document.getElementById('formCompra').addEventListener('submit', function(e) { e.preventDefault(); const data = { nomeComprador: document.getElementById('compraNome').value, telefone: document.getElementById('compraTel').value, formaPagamento: document.getElementById('compraPag').value, nomeProduto: document.getElementById('compraProdNome').value, valor: document.getElementById('compraValor').value }; fetch('/api/loja/pedidos', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data)}).then(() => { alert('Pedido realizado!'); bootstrap.Modal.getInstance(document.getElementById('modalCompraForm')).hide(); document.getElementById('formCompra').reset(); }); });
+
+        // --- NOTÍCIAS ---
+        function carregarNoticiasPublicas() { fetch('/api/noticias').then(r => r.json()).then(data => { const container = document.getElementById('lista-noticias-publica'); const ultimas = data.slice(0, 6); if (ultimas.length === 0) { container.innerHTML = '<div class="col-12 text-center text-muted">Ainda não há notícias.</div>'; return; } container.innerHTML = ''; ultimas.forEach(n => { const dataNot = new Date(n.dataPublicacao).toLocaleDateString('pt-BR'); let mediaThumb = n.tipoMedia === 'VIDEO' ? `<div class="noticia-media-wrapper"><video src="${n.mediaUrl}" class="noticia-img" style="object-fit: cover;"></video><div class="video-icon-overlay"><i class="fas fa-play-circle"></i></div></div>` : `<div class="noticia-media-wrapper"><img src="${n.mediaUrl}" class="noticia-img"></div>`; container.innerHTML += `<div class="col-md-6 col-lg-4"><div class="noticia-card" onclick="verNoticia('${encodeURIComponent(JSON.stringify(n))}')">${mediaThumb}<div class="noticia-body"><div class="noticia-date"><i class="far fa-clock me-1"></i> ${dataNot}</div><h5 class="noticia-title">${n.titulo}</h5><div class="noticia-excerpt">${n.conteudo}</div><span class="btn-read-more mt-auto">Ler notícia completa <i class="fas fa-arrow-right ms-1"></i></span></div></div></div>`; }); }); } function verNoticia(s) { const n = JSON.parse(decodeURIComponent(s)); document.getElementById('modalNoticiaTitulo').innerText = n.titulo; document.getElementById('modalNoticiaData').innerText = "Publicado em: " + new Date(n.dataPublicacao).toLocaleDateString('pt-BR'); document.getElementById('modalNoticiaConteudo').innerText = n.conteudo; const m = document.getElementById('modalNoticiaMedia'); m.innerHTML = n.tipoMedia === 'VIDEO' ? `<video src="${n.mediaUrl}" controls autoplay class="w-100" style="max-height: 500px;"></video>` : `<img src="${n.mediaUrl}" class="img-fluid w-100" style="object-fit: contain;">`; new bootstrap.Modal(document.getElementById('modalNoticia')).show(); }
+
+        // --- DOAÇÃO ---
+        let pixKey = ""; function initDoacao() { fetch('/api/doacao').then(r => r.json()).then(d => { pixKey = d.chavePix; document.getElementById('chavePixTexto').innerText = d.chavePix; document.getElementById('txtDoacaoDescricao').innerText = d.textoDoacao; const q = document.getElementById('qrcodeDoacao'); q.innerHTML = ""; new QRCode(q, { text: d.chavePix, width: 180, height: 180 }); }); } function copiarPix() { navigator.clipboard.writeText(pixKey).then(() => { const m = document.getElementById('msgCopiado'); m.style.opacity = '1'; setTimeout(() => m.style.opacity = '0', 3000); fetch('/api/doacao/contar', {method: 'POST'}); }).catch(() => alert("Copie: " + pixKey)); }
+
+        // --- DIRETORIA ---
+        function carregarDiretoriaPublica() { fetch('/api/diretoria').then(r => r.json()).then(data => { const container = document.getElementById('lista-diretoria'); const listHistorico = document.getElementById('listaHistorico'); const ativos = data.filter(m => m.ativo); const historico = data.filter(m => !m.ativo); container.innerHTML = ativos.map(m => `<div class="col-md-6 col-lg-4 col-xl-3"><div class="glass-card"><img src="${m.fotoUrl}" class="member-photo"><div class="member-role">${m.cargo}</div><h4 class="member-name">${m.nome}</h4><div class="member-period">${m.periodo}</div></div></div>`).join(''); if(ativos.length===0) container.innerHTML='<div class="text-white opacity-50">...</div>'; if (historico.length === 0) listHistorico.innerHTML = '<div class="text-center text-muted p-3">Vazio</div>'; else listHistorico.innerHTML = historico.map(m => `<div class="list-group-item d-flex align-items-center"><img src="${m.fotoUrl}" style="width:50px;height:50px;border-radius:50%;object-fit:cover;filter:grayscale(100%)" class="me-3"><div><h6 class="mb-0 fw-bold">${m.nome}</h6><small class="text-muted">${m.cargo} (${m.periodo})</small></div></div>`).join(''); }); }
+
+        // --- PATROCINADORES (LÓGICA ROTATIVA / CARROSSEL) ---
+        function carregarPatrociniosPublico() {
+            fetch('/api/patrocinadores').then(r => r.json()).then(data => {
+                const esq = document.getElementById('patrocinio-esq');
+                const dir = document.getElementById('patrocinio-dir');
+                esq.innerHTML = ''; dir.innerHTML = '';
+
+                // Função para embaralhar o array
+                const shuffle = (array) => {
+                    for (let i = array.length - 1; i > 0; i--) {
+                        const j = Math.floor(Math.random() * (i + 1));
+                        [array[i], array[j]] = [array[j], array[i]];
+                    }
+                    return array;
+                };
+
+                // Cria 4 slots de cada lado (total 8)
+                for (let i = 0; i < 4; i++) {
+                    // Passa uma cópia embaralhada para cada slot, assim eles não rodam iguais
+                    const slotEsq = criarCarrosselSlot(shuffle([...data]), `car-esq-${i}`);
+                    const slotDir = criarCarrosselSlot(shuffle([...data]), `car-dir-${i}`);
+                    
+                    esq.appendChild(slotEsq);
+                    dir.appendChild(slotDir);
+
+                    // Inicializa os carrosséis com tempos aleatórios para não ficarem sincronizados
+                    new bootstrap.Carousel(document.getElementById(`car-esq-${i}`), { interval: 3000 + Math.random() * 2500 });
+                    new bootstrap.Carousel(document.getElementById(`car-dir-${i}`), { interval: 3000 + Math.random() * 2500 });
+                }
+            });
+        }
+
+        function criarCarrosselSlot(items, id) {
+            const div = document.createElement('div');
+            div.className = 'sidebar-ad-slot';
+
+            if (items.length === 0) {
+                div.innerHTML = `
+                    <div class="ad-placeholder" onclick="alert('Entre em contato para anunciar aqui!')">
+                        <i class="fas fa-plus-circle fa-2x mb-2"></i>
+                        <span class="small fw-bold">Seja um<br>Patrocinador</span>
+                    </div>`;
+                return div;
+            }
+
+            let slides = items.map((item, idx) => {
+                const active = idx === 0 ? 'active' : '';
+                let content = item.tipoMedia === 'VIDEO'
+                    ? `<video src="${item.mediaUrl}" autoplay muted loop class="ad-video"></video>`
+                    : `<img src="${item.mediaUrl}" class="ad-img">`;
+                // h-100 garante altura total
+                return `<div class="carousel-item ${active} h-100">${content}</div>`;
+            }).join('');
+
+            div.innerHTML = `
+                <div id="${id}" class="carousel slide carousel-fade h-100" data-bs-ride="carousel">
+                    <div class="carousel-inner h-100">${slides}</div>
+                </div>
+            `;
+            return div;
+        }
+
+        // --- OUTROS ---
+        document.getElementById('telefoneInput').addEventListener('input', function(e) { let x=e.target.value.replace(/\D/g,'').match(/(\d{0,2})(\d{0,5})(\d{0,4})/); e.target.value=!x[2]?x[1]:'('+x[1]+') '+x[2]+(x[3]?'-'+x[3]:''); });
+        document.addEventListener('click', function(e) { if(e.target && e.target.closest('a[href="#inscricao"]')) { e.preventDefault(); fetch('/api/inscricoes/status').then(r=>r.json()).then(a=>{ const m=a?new bootstrap.Modal(document.getElementById('modalInscricao')):new bootstrap.Modal(document.getElementById('modalEncerrado')); m.show(); }); } });
+        let insc=null; document.getElementById('formInscricaoPublica').addEventListener('submit', function(e) { e.preventDefault(); const fd=new FormData(this); fetch('/api/inscricoes', {method:'POST',body:fd}).then(r=>{if(r.ok)return r.json();throw new Error()}).then(d=>{ bootstrap.Modal.getInstance(document.getElementById('modalInscricao')).hide(); insc=d; document.getElementById('compId').innerText=`#${d.id}`; document.getElementById('compNome').innerText=d.nomeCompleto; document.getElementById('qrcode').innerHTML=""; new QRCode(document.getElementById('qrcode'),{text:`Insc:${d.id}`,width:128,height:128}); new bootstrap.Modal(document.getElementById('modalComprovante')).show(); }); });
+        function compartilharWhatsapp() { if(!insc)return; window.open(`https://wa.me/?text=${encodeURIComponent(`Inscrição Confirmada: #${insc.id}`)}`,'_blank'); }
+    </script>
+</body>
+</html>
